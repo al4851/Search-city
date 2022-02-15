@@ -1,18 +1,21 @@
-/**
- * Find a path from a given city to another city using various search methods
- *
- * @author Alfred Li
- */
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+/**
+ * Find a path from a given city to another city using various search methods
+ * Usage: java Search inputFile outputFile
+ *
+ * @author Alfred Li
+ */
 public class Search {
     public static void main(String[] args) {
+        /* City info */
         HashMap<String, CityInfo> cityInfo = readCityInfo();
+
+        /* Command line argument */
         if (args.length < 2) {
             System.err.println("Usage: java Search inputFile outputFile");
             System.exit(0);
@@ -55,6 +58,21 @@ public class Search {
             System.exit(0);
         }
         return cityInfo;
+    }
+
+    public static void traverse() {
+    }
+
+    public static void BFS() {
+
+    }
+
+    public static void DFS() {
+
+    }
+
+    public static void AS() {
+
     }
 
     public static double distance(CityInfo city1, CityInfo city2) {
