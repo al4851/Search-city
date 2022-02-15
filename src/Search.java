@@ -12,8 +12,7 @@ import java.util.Scanner;
 
 public class Search {
     public static void main(String[] args) {
-        HashMap<String, CityInfo> cityInfo = readCity();
-        readEdge();
+        HashMap<String, CityInfo> cityInfo = readCityInfo();
         if (args.length < 2) {
             System.err.println("Usage: java Search inputFile outputFile");
             System.exit(0);
@@ -23,11 +22,13 @@ public class Search {
             System.out.println(args[0] + args[1]);
         } else if (args[0].equalsIgnoreCase("-") && args[1].equalsIgnoreCase("-")) {
             System.out.println(args[0] + args[1]);
+        } else {
+            System.out.println(args[0] + args[1]);
         }
     }
 
-    public static HashMap<String, CityInfo> readCity() {
-        HashMap<String, CityInfo> cityInfoMap = new HashMap<>();
+    public static HashMap<String, CityInfo> readCityInfo() {
+        HashMap<String, CityInfo> cityInfo = new HashMap<>();
         try {
             Scanner scan = new Scanner(new File("city.dat"));
             while (scan.hasNext()) {
@@ -35,24 +36,25 @@ public class Search {
                 String state = scan.next();
                 double lat = scan.nextDouble();
                 double lon = scan.nextDouble();
-                //System.out.printf("%s %s %f %f\n", name, state, lat, lon);
-                cityInfoMap.put(name, new CityInfo(name, state, lat, lon));
+                cityInfo.put(name, new CityInfo(name, state, lat, lon));
             }
         } catch (FileNotFoundException e) {
             System.err.println("File not found: city.dat");
             System.exit(0);
         }
-        return cityInfoMap;
-    }
-
-    public static void readEdge() {
         try {
             Scanner scan = new Scanner(new File("edge.dat"));
-
+            while (scan.hasNext()) {
+                String city1 = scan.next();
+                String city2 = scan.next();
+                cityInfo.get(city1).getEdge().add(city2);
+                cityInfo.get(city2).getEdge().add(city1);
+            }
         } catch (FileNotFoundException e) {
             System.err.println("File not found: edge.dat");
             System.exit(0);
         }
+        return cityInfo;
     }
 
     public static double distance(CityInfo city1, CityInfo city2) {
@@ -88,6 +90,10 @@ public class Search {
 
         public double getLon() {
             return lon;
+        }
+
+        public LinkedList<String> getEdge() {
+            return edge;
         }
     }
 }
