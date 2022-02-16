@@ -1,35 +1,32 @@
+import java.util.Scanner;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Scanner;
 
 /**
  * Find a path from a given city to another city using various search methods
- * Usage: java Search inputFile outputFile
+ * Usage: java Search inputFile outputFile ("-" for standard input output)
  *
  * @author Alfred Li
  */
 public class Search {
     public static void main(String[] args) {
-        /* City info */
-        HashMap<String, CityInfo> cityInfo = readCityInfo();
-
-        /* Command line argument */
         if (args.length < 2) {
             System.err.println("Usage: java Search inputFile outputFile");
             System.exit(0);
-        } else if (args[0].equalsIgnoreCase("-")) {
-            System.out.println(args[0] + args[1]);
-        } else if (args[1].equalsIgnoreCase("-") ) {
-            System.out.println(args[0] + args[1]);
-        } else if (args[0].equalsIgnoreCase("-") && args[1].equalsIgnoreCase("-")) {
-            System.out.println(args[0] + args[1]);
         } else {
-            System.out.println(args[0] + args[1]);
+            HashMap<String, CityInfo> cityInfo = readCityInfo();
+            String[] input = readInput(cityInfo, args[0]);
+            System.out.printf("%s %s\n", input[0], input[1]);
         }
     }
 
+    /**
+     * Read city info from "city.dat" file and "edge.dat" file
+     *
+     * @return Hash map contain information of cities
+     */
     public static HashMap<String, CityInfo> readCityInfo() {
         HashMap<String, CityInfo> cityInfo = new HashMap<>();
         try {
@@ -60,19 +57,82 @@ public class Search {
         return cityInfo;
     }
 
+    /**
+     * Read input from user or from file
+     *
+     * @param cityInfo information of cities
+     * @param fileName file name of input file
+     * @return string array contain the start and destination
+     */
+    public static String[] readInput(HashMap<String, CityInfo> cityInfo, String fileName) {
+        Scanner scan;
+        String[] input = null;
+        String start, destination;
+        if (fileName.equalsIgnoreCase("-")) {
+            scan = new Scanner(System.in);
+            System.out.println("Please enter the start city name:");
+            start = scan.nextLine();
+            validInput(cityInfo, start);
+            System.out.println("Please enter the destination city name:");
+            destination = scan.nextLine();
+            validInput(cityInfo, destination);
+            input = new String[]{start, destination};
+        } else {
+            try {
+                scan = new Scanner(new File(fileName));
+                start = scan.next();
+                validInput(cityInfo, start);
+                destination = scan.next();
+                validInput(cityInfo, destination);
+                input = new String[]{start, destination};
+            } catch (FileNotFoundException e) {
+                System.err.println("File not found: " + fileName);
+                System.exit(0);
+            }
+        }
+        return input;
+    }
+
+    /**
+     * Validation the existence of city name
+     *
+     * @param cityInfo information of cities
+     * @param city name of city to validate
+     */
+    public static void validInput(HashMap<String, CityInfo> cityInfo, String city) {
+        try {
+            if (!cityInfo.containsKey(city))
+                throw new Exception(city);
+        } catch (Exception e) {
+            System.err.println("No such city: " + e.getMessage());
+            System.exit(0);
+        }
+    }
+
     public static void traverse() {
     }
 
-    public static void BFS() {
+    public static String[] BFS(HashMap<String, CityInfo> cityInfo, String[] input) {
+        String start = input[0];
+        String end = input[1];
+        //LinkedList<String> queue = new LinkedList<>();
+        //queue.add(start);
 
+        return null;
     }
 
-    public static void DFS() {
+    public static String[] DFS(HashMap<String, CityInfo> cityInfo, String[] input) {
+        String start = input[0];
+        String end = input[1];
 
+        return null;
     }
 
-    public static void AS() {
+    public static String[] AS(HashMap<String, CityInfo> cityInfo, String[] input) {
+        String start = input[0];
+        String end = input[1];
 
+        return null;
     }
 
     public static double distance(CityInfo city1, CityInfo city2) {
