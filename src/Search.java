@@ -1,8 +1,5 @@
-import java.util.Scanner;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.io.*;
+import java.util.*;
 
 /**
  * Find a path from a given city to another city using various search methods
@@ -18,7 +15,7 @@ public class Search {
         } else {
             HashMap<String, CityInfo> cityInfo = readCityInfo();
             String[] input = readInput(cityInfo, args[0]);
-            System.out.printf("%s %s\n", input[0], input[1]);
+            output(cityInfo, input, args[1]);
         }
     }
 
@@ -47,13 +44,14 @@ public class Search {
             while (scan.hasNext()) {
                 String city1 = scan.next();
                 String city2 = scan.next();
-                cityInfo.get(city1).getEdge().add(city2);
-                cityInfo.get(city2).getEdge().add(city1);
+                cityInfo.get(city1).edge.add(city2);
+                cityInfo.get(city2).edge.add(city1);
             }
         } catch (FileNotFoundException e) {
             System.err.println("File not found: edge.dat");
             System.exit(0);
         }
+
         return cityInfo;
     }
 
@@ -90,6 +88,7 @@ public class Search {
                 System.exit(0);
             }
         }
+
         return input;
     }
 
@@ -109,16 +108,78 @@ public class Search {
         }
     }
 
-    public static void traverse() {
+    public static void output(HashMap<String, CityInfo> cityInfo, String[] input, String fileName) {
+        LinkedList<String> path = BFS(cityInfo, input);
+        String previous = input[0];
+        double distance = 0;
+        if (fileName.equalsIgnoreCase("-")) {
+            System.out.println("\nBreadth-First Search Results:");
+            System.out.println(input[0]);
+            for (int i = 1; i < path.size(); i++) {
+                System.out.println(path.get(i));
+                distance += distance(cityInfo.get(path.get(i)), cityInfo.get(previous));
+                previous = path.get(i);
+            }
+            System.out.printf("That took %d hops to find.\n", path.size() - 1);
+            System.out.printf("Total distance = %d miles.\n", Math.round(distance));
+        } else {
+            try {
+                FileWriter fileWriter = new FileWriter(fileName);
+                PrintWriter printWriter = new PrintWriter(fileWriter);
+                printWriter.println("\nBreadth-First Search Results:");
+                printWriter.println(input[0]);
+                for (int i = 1; i < path.size(); i++) {
+                    printWriter.println(path.get(i));
+                    distance += distance(cityInfo.get(path.get(i)), cityInfo.get(previous));
+                    previous = path.get(i);
+                }
+                printWriter.printf("That took %d hops to find.\n", path.size() - 1);
+                printWriter.printf("Total distance = %d miles.\n", Math.round(distance));
+                printWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public static String[] BFS(HashMap<String, CityInfo> cityInfo, String[] input) {
+    public static LinkedList<String> BFS(HashMap<String, CityInfo> cityInfo, String[] input) {
         String start = input[0];
         String end = input[1];
-        //LinkedList<String> queue = new LinkedList<>();
-        //queue.add(start);
+        LinkedList<String> queue = new LinkedList<>();
+        LinkedList<String> path = new LinkedList<>();
+        HashMap<String, String> predecessors = new HashMap<>();
+        queue.add(start);
+        predecessors.put(start, null);
 
-        return null;
+        while (!queue.isEmpty()) {
+            String current = queue.remove(0);
+            if (current.equalsIgnoreCase(end)) {
+                break;
+            }
+            Collections.sort(cityInfo.get(current).edge);
+            for (String s : cityInfo.get(current).edge) {
+                if (!predecessors.containsKey(s)) {
+                    if (cityInfo.get(current).edge.contains(end)) {
+                        predecessors.put(end, current);
+                        queue.add(0, end);
+                        break;
+                    }
+                    predecessors.put(s, current);
+                    queue.add(s);
+                }
+            }
+        }
+
+        if (predecessors.containsKey(end)) {
+            String current = end;
+            while (!current.equalsIgnoreCase(start)) {
+                path.add(0, current);
+                current = predecessors.get(current);
+            }
+            path.add(0, start);
+        }
+
+        return path;
     }
 
     public static String[] DFS(HashMap<String, CityInfo> cityInfo, String[] input) {
@@ -152,26 +213,6 @@ public class Search {
             this.state = state;
             this.lat = lat;
             this.lon = lon;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getState() {
-            return state;
-        }
-
-        public double getLat() {
-            return lat;
-        }
-
-        public double getLon() {
-            return lon;
-        }
-
-        public LinkedList<String> getEdge() {
-            return edge;
         }
     }
 }
