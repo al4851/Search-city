@@ -112,27 +112,27 @@ public class Search {
         LinkedList<String> path;
         if (fileName.equalsIgnoreCase("-")) {
             path = BFS(cityInfo, input);
-            System.out.println("\nBreadth-First Search Results:");
+            System.out.println("\nBreadth-First Search Results: ");
             stdOutput(cityInfo, path);
             path = DFS(cityInfo, input);
             System.out.println("\nDepth-First Search Results:");
             stdOutput(cityInfo, path);
             path = AS(cityInfo, input);
-            System.out.println("\nA* Search Results:");
+            System.out.println("\nA* Search Results: ");
             stdOutput(cityInfo, path);
         } else {
             try {
                 FileWriter fileWriter = new FileWriter(fileName);
                 PrintWriter printWriter = new PrintWriter(fileWriter);
                 path = BFS(cityInfo, input);
-                printWriter.println("\nBreadth-First Search Results:");
+                printWriter.println("\nBreadth-First Search Results: ");
                 outputFile(cityInfo, path, printWriter);
                 path = DFS(cityInfo, input);
-                printWriter.println("\nDepth-First Search Results:");
+                printWriter.println("\nDepth-First Search Results: ");
                 outputFile(cityInfo, path, printWriter);
-                //path = AS(cityInfo, input);
-                printWriter.println("\nA* Search Results:");
-                //outputFile(cityInfo, path, printWriter);
+                path = AS(cityInfo, input);
+                printWriter.println("\nA* Search Results: ");
+                outputFile(cityInfo, path, printWriter);
                 printWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
