@@ -3,7 +3,7 @@ import java.util.*;
 
 /**
  * Find a path from a given city to another city using various search methods
- * Usage: java Search inputFile outputFile ("-" for standard input output)
+ * Usage: java Search inputFile outputFile ("-" for standard input/output)
  *
  * @author Alfred Li
  */
@@ -161,7 +161,8 @@ public class Search {
      * @param cityInfo information of cities
      * @param path result path
      */
-    public static void stdOutput(HashMap<String, CityInfo> cityInfo, LinkedList<String> path) {
+    public static void stdOutput(HashMap<String, CityInfo> cityInfo,
+                                 LinkedList<String> path) {
         double distance = 0;
         String previous = path.get(0);
         System.out.println(path.get(0));
@@ -302,9 +303,8 @@ public class Search {
         LinkedList<ASNode> queue = new LinkedList<>();
         LinkedList<String> path = new LinkedList<>();
         double gn, hn;
+        queue.add(new ASNode(start, null, 0, distance(cityInfo.get(start), cityInfo.get(end))));
         ASNode goal = null;
-        double distance = distance(cityInfo.get(start), cityInfo.get(end));
-        queue.add(new ASNode(start, null, 0, distance));
 
         while (!queue.isEmpty()) {
             ASNode current = queue.remove();
@@ -352,7 +352,7 @@ public class Search {
         String state;
         double lat;
         double lon;
-        // List of direct route connecting this city
+        // List of cities has direct connection to this city
         LinkedList<String> edge = new LinkedList<>();
 
         /**
@@ -384,7 +384,7 @@ public class Search {
         /**
          * Constructor of ASNode
          * @param name name of current city
-         * @param previous the previous city come from
+         * @param previous the previous ASNode come from
          * @param gn distance take from start to current city
          * @param hn direct distance between current city and destination
          */
@@ -396,9 +396,8 @@ public class Search {
             this.fn = gn + hn;
         }
 
-
         /**
-         * Comparator to compare to ASNode
+         * Comparator to compare between two ASNode
          *
          * @param o the other ASNode
          * @return the order of two ASNode
@@ -412,6 +411,4 @@ public class Search {
             return 0;
         }
     }
-
-
 }
